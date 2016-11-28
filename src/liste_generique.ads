@@ -48,6 +48,11 @@ package Liste_Generique is
 private 
     type Cellule;
     type Liste is access Cellule;
+    
+    type Cellule is record		--  La cellul contient un élément générique de type élément
+       Ele: Element;
+       Next: Liste;
+    end record;
 
     type Iterateur_Interne;
     type Iterateur is access Iterateur_Interne;
