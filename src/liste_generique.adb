@@ -1,5 +1,6 @@
 --  Fichier d'implémentation des méthodes génériques
 --  du package Liste_Generique
+with Ada.Text_Io; use Ada.Text_Io;
 with Ada.Unchecked_Deallocation;
 
 package body Liste_Generique is
@@ -43,9 +44,10 @@ package body Liste_Generique is
 
     -- Cree un nouvel iterateur 
      function Creer_Iterateur (L : Liste) return Iterateur is 
-	--  L'itérateur est en fait une "copie" de la liste elle même, un sorte de gros tampon
-	It : Iterateur := L;
+	It : Iterateur;
      begin
+	--  It.all est de type iterateur interne c'est a dire pointeur dur cellule
+	It.all := new Cellule'(L.Ele,L.Next);
 	return It;
      end Creer_Iterateur;
 
@@ -53,15 +55,16 @@ package body Liste_Generique is
      procedure Libere_Iterateur(It : in out Iterateur) is 	
      begin
 	--  On fait simplement dépointer l'itérateur
-	It.Next := null;		--  par sécuritée
 	LibereIt(It);
      end Libere_Iterateur;
 
     -- Avance d'une case dans la liste
      procedure Suivant(It : in out Iterateur) is 
      begin
+	--  L'itérateur est en fait un autre pointeur sur la liste
 	if A_Suivant(It) then
-	   It := It.Next;
+	   --It.all.all désigne une cellule, grace à next on accéde à la cellule suivant
+	   It.all.all := It.all.Next.all;
 	else
 	   raise FinDeListe;
 	end if;
@@ -70,13 +73,15 @@ package body Liste_Generique is
     -- Retourne l'element courant
      function Element_Courant(It : Iterateur) return Element is 
      begin
-	return It.Ele;
+	--  It.all désigne l'iter intern, et donc it.all.all une celleule
+	return It.all.all.Ele;
      end Element_Courant;
 
     -- Verifie s'il reste un element a parcourir
      function A_Suivant(It : Iterateur) return Boolean is 
      begin
-	return (It.Next /= null);
+	--  It.all désigne l'itérateur interne pointant sur une cellule ayant un chant Next
+	return (It.all.Next /= null);
      end A_Suivant;
    
 end Liste_Generique;
