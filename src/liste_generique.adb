@@ -3,7 +3,7 @@
 with Ada.Text_Io; use Ada.Text_Io;
 with Ada.Unchecked_Deallocation;
 
-package body Liste_Generique is
+package body liste_generique is
    
    --  instanciation de la méthode de libération.
    procedure Libere is new Ada.Unchecked_Deallocation (Cellule, Liste);
@@ -45,9 +45,11 @@ package body Liste_Generique is
     -- Cree un nouvel iterateur 
      function Creer_Iterateur (L : Liste) return Iterateur is 
 	It : Iterateur;
-     begin
+	It_I : Iterateur_Interne;
+     begin	
 	--  It.all est de type iterateur interne c'est a dire pointeur dur cellule
-	It.all := new Cellule'(L.Ele,L.Next);
+	It_I := new Cellule'(L.Ele,L.Next);
+	It := new Iterateur_Interne'(It_I);
 	return It;
      end Creer_Iterateur;
 
@@ -84,4 +86,4 @@ package body Liste_Generique is
 	return (It.all.Next /= null);
      end A_Suivant;
    
-end Liste_Generique;
+end liste_generique;
