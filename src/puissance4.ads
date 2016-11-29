@@ -6,11 +6,11 @@ generic
    Hauteur : Integer;
    Largeur : Integer;
    Nb_Pieces_Alignees : Integer;
-   
+
 package Puissance4 is
    
    type Etat is private;
-   type Coup is private;   
+   type Coup is private;      
    
    procedure Initialiser(E : in out Etat);   
    
@@ -45,6 +45,6 @@ private
       Symbole : Character;
    end record;
    
-   function Recherche_Case_Libre(C : Colonne) return Integer;
+   function Recherche_Case_Libre(E : Etat; Indice_Colonne : Integer) return Integer;
    
 end Puissance4;
