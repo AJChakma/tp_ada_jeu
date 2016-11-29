@@ -3,6 +3,14 @@
 with Ada.Text_Io; use Ada.Text_Io;
 with Ada.Unchecked_Deallocation;
 
+-------------------------------------
+--!! Attention !!--------------------
+--Penser à passer le première élément
+--lors du parcours de la liste avec--
+--l'itérateur pour ne pas prendre en-
+--compte l'élément fictife !!--------
+-------------------------------------
+
 package body liste_generique is
    
    --  instanciation de la méthode de libération.
@@ -46,18 +54,20 @@ package body liste_generique is
      function Creer_Iterateur (L : Liste) return Iterateur is 
 	It : Iterateur;
 	It_I : Iterateur_Interne;
+	EleFictif : Element;
      begin	
-	--  It.all est de type iterateur interne c'est a dire pointeur dur cellule
-	It_I := new Cellule'(L.Ele,L.Next);
+	--  Ajou d'un élément fictif en fin de liste
+	It_I := new Cellule'(EleFictif,L);
 	It := new Iterateur_Interne'(It_I);
 	return It;
      end Creer_Iterateur;
 
     -- Liberation d'un iterateur
      procedure Libere_Iterateur(It : in out Iterateur) is 	
+	procedure LibereCel is new Ada.Unchecked_Deallocation(Cellule,Iterateur_Interne);
      begin
-	--  On fait simplement dépointer l'itérateur
-	LibereIt(It);
+	LibereCel(It.all);
+	LibereIt(It);	
      end Libere_Iterateur;
 
     -- Avance d'une case dans la liste

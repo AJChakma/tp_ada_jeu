@@ -31,12 +31,13 @@ begin
    New_Line;
    Put_Line("test affichage avec l'IT :");
    It := Creer_Iterateur(L);
-   loop
+
+   while A_Suivant(It) loop
+      Suivant(It);			--  pour ingorer l'élement fictif en tête deliste
       Val := Element_Courant(It);
       Put_Line(Integer'Image(Val));
-      exit when not A_Suivant(It);
-      Suivant(It);
    end loop;
-   
+   Libere_Iterateur(It);
    Libere_Liste(L);
+   
 end Test_Liste_Gene;
