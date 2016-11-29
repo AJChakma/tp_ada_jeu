@@ -12,10 +12,10 @@ package Puissance4 is
    type Etat is private;
    type Coup is private;   
    
-   procedure Initialiser (E : in out Etat);   
+   procedure Initialiser(E : in out Etat);   
    
    -- Calcule l'etat suivant en appliquant le coup
-   function Etat_Suivant(E : Etat; C : Coup) return Etat;    
+   function Jouer(E : Etat; C : Coup) return Etat;    
     
    -- Indique si l'etat courant est gagnant pour le joueur J
    function Est_Gagnant(E : Etat; J : Joueur) return Boolean; 
@@ -24,7 +24,7 @@ package Puissance4 is
    function Est_Nul(E : Etat) return Boolean; 
    
    -- Fonction d'affichage de l'etat courant du jeu
-   procedure Affiche_Jeu(E : Etat);
+   procedure Afficher(E : Etat);
    
    -- Affiche a l'ecran le coup passe en parametre
    procedure Affiche_Coup(C : in Coup);   
@@ -38,14 +38,13 @@ package Puissance4 is
 private
    
    type Colonne is array (1..Hauteur) of Character;
-   type Matrice is array (1..Largeur) of Colonne;   
-   
-   type Etat is record
+   type Etat is array (1..Largeur) of Colonne;   
       
+   type Coup is record
+      Indice_Colonne : Integer;
+      Symbole : Character;
    end record;
    
-   type Coup is record
-      Colonne : Integer;      
-   end record;
+   function Recherche_Case_Libre(C : Colonne) return Integer;
    
 end Puissance4;
