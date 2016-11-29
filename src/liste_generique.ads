@@ -12,7 +12,7 @@ generic
     
 -- Les specifications du package, qui n'utilisent
 -- que les elements et procedures generiques
-package liste_generique is
+package Liste_Generique is
     type Liste is private;
     type Iterateur is private;
 
@@ -58,6 +58,6 @@ private
     type Iterateur is access Iterateur_Interne;
     type Iterateur_Interne is access Cellule;
 
-end liste_generique;
+end Liste_Generique;
 
 

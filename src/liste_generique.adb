@@ -11,7 +11,7 @@ with Ada.Unchecked_Deallocation;
 --compte l'élément fictife !!--------
 -------------------------------------
 
-package body liste_generique is
+package body Liste_Generique is
    
    --  instanciation de la méthode de libération.
    procedure Libere is new Ada.Unchecked_Deallocation (Cellule, Liste);
@@ -96,4 +96,4 @@ package body liste_generique is
 	return (It.all.Next /= null);
      end A_Suivant;
    
-end liste_generique;
+end Liste_Generique;

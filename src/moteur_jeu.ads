@@ -14,7 +14,6 @@ generic
     
     -- Indique si l'etat courant est un status quo (match nul)
     with function Est_Nul(E : Etat) return Boolean; 
-
     
     -- Affiche a l'ecran le coup passe en parametre
     with procedure Affiche_Coup(C : in Coup);

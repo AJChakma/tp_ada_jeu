@@ -2,7 +2,7 @@ with Ada.Text_Io; use Ada.Text_Io;
 with Ada.Integer_Text_Io; use Ada.Integer_Text_Io;
 with Ada.Unchecked_Deallocation;
 
-with liste_generique;
+with Liste_Generique;
 
 procedure Test_Liste_Gene is
    -- procedure d'affiche
@@ -12,7 +12,7 @@ procedure Test_Liste_Gene is
    end;
    
    --  instanciation avec des entiers
-   package List_Int is new liste_generique(Integer,Affiche_Integer);
+   package List_Int is new Liste_Generique(Integer,Affiche_Integer);
    use List_Int;
    
    --Déclarations
