@@ -1,5 +1,5 @@
-with Ada.Text_IO;
-use Ada.Text_IO;
+with Ada.Text_IO, Participant;
+use Ada.Text_IO, Participant;
 
 package body Partie is
    
@@ -9,7 +9,7 @@ package body Partie is
    begin
       
       --  Tant que l'on n'a pas atteint un état stable (gagnant ou nul), on continue le jeu
-      while not (Est_Gagnant(E,Joueur_Courant) or else Est_Gagnant(E,Adversaire(Joueur_Courant)) or else Est_Nul(E)) loop
+      while not ((Est_Gagnant(E,Joueur_Courant) or else Est_Gagnant(E,Adversaire(Joueur_Courant))) or else Est_Nul(E)) loop
 	 --  Affichage du jeu
 	 Affiche_Jeu(E);
 	 
