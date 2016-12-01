@@ -19,7 +19,14 @@ package Puissance4 is
     
    -- Indique si l'etat courant est gagnant pour le joueur J
    function Est_Gagnant(E : Etat; J : Joueur) return Boolean; 
-
+   
+   function Est_Gagnant_Colonne(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   function Est_Gagnant_Ligne(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   function Est_Gagnant_Diagonale_NE_SO(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   
    -- Indique si l'etat courant est un status quo (match nul)
    function Est_Nul(E : Etat) return Boolean; 
    
