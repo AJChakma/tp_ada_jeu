@@ -6,7 +6,7 @@ generic
    Hauteur : Integer;
    Largeur : Integer;
    Nb_Pieces_Alignees : Integer;
-
+   
 package Puissance4 is
    
    type Etat is private;
@@ -19,13 +19,6 @@ package Puissance4 is
     
    -- Indique si l'etat courant est gagnant pour le joueur J
    function Est_Gagnant(E : Etat; J : Joueur) return Boolean; 
-   
-   function Est_Gagnant_Colonne(E :Etat; Sym_Joueur : Character) return Boolean;
-   
-   function Est_Gagnant_Ligne(E :Etat; Sym_Joueur : Character) return Boolean;
-   
-   function Est_Gagnant_Diagonale_NE_SO(E :Etat; Sym_Joueur : Character) return Boolean;
-   
    
    -- Indique si l'etat courant est un status quo (match nul)
    function Est_Nul(E : Etat) return Boolean; 
@@ -53,5 +46,13 @@ private
    end record;
    
    function Recherche_Case_Libre(E : Etat; Indice_Colonne : Integer) return Integer;
+   
+   function Est_Gagnant_Colonne(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   function Est_Gagnant_Ligne(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   function Est_Gagnant_Diagonale_NE_SO(E :Etat; Sym_Joueur : Character) return Boolean;
+   
+   function Est_Gagnant_Diagonale_NO_SE(E :Etat; Sym_Joueur : Character) return Boolean;
    
 end Puissance4;
