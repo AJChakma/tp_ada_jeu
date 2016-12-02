@@ -1,3 +1,4 @@
+with Ada.Text_Io;use Ada.Text_Io;
 with Ada.Numerics.Discrete_Random;
 
 package body Moteur_Jeu is
@@ -27,6 +28,7 @@ package body Moteur_Jeu is
 	return Eval(E);
       elsif Est_Terminal(E) then
 	 --  état terminale mais profondeur pas atteinte
+	 Put_Line("Eval_Min_Max : Etat terminale");
 	 if Est_Nul(E) then
 	    return 0;
 	 elsif Est_Gagnant(E,J) then
@@ -36,6 +38,7 @@ package body Moteur_Jeu is
 	 end if;
       else
 	 --  Autre cas (i.e pas sur une feuille et état pas terminale)
+	 Put_Line("Eval_Min_Max : Récursivité enclanché");
 	 L := Creer_Liste;
 	 L := Coups_Possibles(E,J);
 	 --  !! L'iterateur doit etre crée aprés avoir remplis la liste à cause de l'élé fictif
@@ -45,14 +48,13 @@ package body Moteur_Jeu is
 	    --  Calcule de l'état suivant pour chaque coup possible
 	    ESuiv := Etat_Suivant(E,C);	 
 	    if J = JoueurMoteur then	--  le prochain coup sera joué par l'adversaire
-	       IRes := Integer'Min(IRes,Eval_Min_Max(ESuiv,P,Element_Courant(It),Adversaire(J)));
+	       IRes := Integer'Max(IRes,Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J)));
 	    else			--  le prochain coup et joué par le joueur Moteur
-	       IRes := Integer'Max(IRes,Eval_Min_Max(ESuiv,P,Element_Courant(It),Adversaire(J)));
+	       IRes := Integer'Min(IRes,Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J)));
 	    end if;
 	 end loop;
 	 Libere_Iterateur(It);
-	 Libere_Liste(L);
-	 
+	 Libere_Liste(L);	 
 	 return IRes;
       end if;
    end Eval_Min_Max;
@@ -69,7 +71,7 @@ package body Moteur_Jeu is
       It_L_Coups_Egaux : Iterateur;
       Nbr_Coups_Egaux : Positive := 1;	--  Compte le nombre de coups à valeurs égales
       Val_Coup : Integer;			--  Valeur de coup évalué
-      Val_Meilleur_Coup : Integer := Integer'Last; --  Valeur du meilleur coup
+      Val_Meilleur_Coup : Integer := Integer'First; --  Valeur du meilleur coup
    begin
       --Initialisation des listes
       L_Coups_Egaux := Creer_Liste;
@@ -78,9 +80,12 @@ package body Moteur_Jeu is
       It := Creer_Iterateur(L);      
       --On Evalue chaque coups
       while A_Suivant(It) loop
+	 --Put_Line("Choix_Coup : Examen d'un Coup...");
 	 Suivant(It);			--  évite l'élément fictif a la première bcl
 	 C := Element_Courant(It);	--  Récupère le coup courant
 	 Val_Coup := Eval_Min_Max(E,P,C,JoueurMoteur); --  Puis la valeure de ce coup
+	 --  Put("Choix_Coup : Le coup vaux " & Integer'Image(Val_Coup));
+	 --  New_Line;
 	 if Val_Coup = Val_Meilleur_Coup then
 	    -- Si le coup évalué et le meilleur coup on la même valeur, on ajout le coup
 	    -- courant à la liste et on incrménete le nombre de coups égaux
@@ -105,21 +110,32 @@ package body Moteur_Jeu is
       --  	- Une liste de coups de valeurs égales : Val_Meilleur_Coup
       --  	- Un Entier Nbr_Coups_Egaux Qui Représente Le Nombre De Coups De Valeur égales
       --  --------------------------------------------------------------------------------
+      --  Put("Choix_Coup : Nbr de coups égaux : " & Integer'Image(Nbr_Coups_Egaux));
+      --  New_Line;
       if Nbr_Coups_Egaux > 1 then
 	 declare
 	    -- Les lignes suivante génère un nombre aléatoire entre 1 et le nombre max de coups
 	    subtype Intervalle is Positive range 1 .. Nbr_Coups_Egaux;
-	    -- instanciation du package
+
 	    package Random_Positive is new Ada.Numerics.Discrete_Random(Intervalle);
 	    use Random_Positive;
 	    G : Generator;
+	    Pos : Positive;
+	    I : Natural :=0;
 	 begin
+	    --  Put("Choix_Coup : random  du coup entre 1 et " & Integer'Image(Nbr_Coups_Egaux));
+	    --  New_Line;
 	    Reset(G);	    
 	    It_L_Coups_Egaux := Creer_Iterateur(L_Coups_Egaux);
 	    --  On parcoure la liste un nombre aléatoire de fois pour choisir le coup
-	    for I in 0 .. Random(G) loop
+	    Pos := Random(G);
+	    --  Put("Choix_Coup : coup choisit numéro" & Integer'Image(Pos));
+	    --  New_Line;
+	    loop
+	       I := I+1;
 	       --  Comme la valeure aléatoire minimum et 1, on sautera forcément l'élement fictif
 	       Suivant(It_L_Coups_Egaux);
+	       exit when (not A_Suivant(It_L_Coups_Egaux)) or I = Pos;
 	    end loop;
 	    C := Element_Courant(It_L_Coups_Egaux);
 	    Libere_Iterateur(It_L_Coups_Egaux);
