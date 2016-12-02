@@ -40,13 +40,12 @@ procedure Test_Moteur is
    function Eval(E : Integer) return Integer is
    begin
       if E > 21 then
-	 return -100;
-      elsif E = 21 then
-	 return 100;
+	 return Integer'First;	 --  (i.e -999999...)
+      elsif E >= 21 and E <= 21 then
+	 return Integer'Last;	 --  (i.e +999999...)
       else
-	 return 21-E;		 --  plus ont est proche de 21 mieu c'est
+	 return 0;
       end if;
-      return 0;		
    end Eval;
    
    package Liste_Coups is new Liste_Generique(Integer,Affiche_Coup);
@@ -61,7 +60,7 @@ procedure Test_Moteur is
       Insere_Tete(3,L);
       return L;
    end Coups_Possibles;
-   --  a ytester avec profondeur > 0
+
    package Moteur_Jeu_Test is new Moteur_Jeu(Integer,Integer,
 					     Coup_Suivant,
 					     Est_Gagnant,
@@ -69,7 +68,7 @@ procedure Test_Moteur is
 					     Affiche_Coup,
 					     Liste_Coups,
 					     Coups_Possibles,
-					     Eval,0,Joueur1);
+					     Eval,10,Joueur1);
    use Moteur_Jeu_Test;
    Score : Integer := 0;
    CoupIA,CoupJoueur : Integer;

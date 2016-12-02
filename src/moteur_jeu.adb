@@ -1,4 +1,5 @@
 with Ada.Text_Io;use Ada.Text_Io;
+with Ada.Integer_Text_Io; use Ada.Integer_Text_Io;
 with Ada.Numerics.Discrete_Random;
 
 package body Moteur_Jeu is
@@ -11,6 +12,13 @@ package body Moteur_Jeu is
    begin
       return Est_Nul(E) or Est_Gagnant(E,JoueurMoteur) or Est_Gagnant(E,Adversaire(JoueurMoteur));
    end Est_Terminal;
+   
+   -- procedure d'affiche d'entiers
+   procedure Affiche_Integer(I : in Integer) is
+   begin
+      Put(Integer'Image(I));
+   end;
+
 
    -- Evaluation d'un coup a partir d'un etat donne
    -- E : Etat courant
@@ -20,15 +28,33 @@ package body Moteur_Jeu is
    function Eval_Min_Max(E : Etat; P : Natural; C : Coup; J : Joueur) return Integer is
       L : Liste_Coups.Liste;
       It : Iterateur;
-      IRes : Integer;			--  Resulta à retourner
+      Val_Coup,Res : Integer;  --  Valeur du coups retournée
       ESuiv : Etat;			--  Etat suivant (pour la bcl de rec aussi)
+      package Liste_Integer is new Liste_Generique(Integer,Affiche_Integer);
+      L_Val_Coup : Liste_Integer.Liste;	--  Liste de valeurs de coup (entier)
+      
+      procedure Meilleur_Val_Coup(L : in out Liste_Integer.Liste; Res : out Integer) is
+	 It : Liste_Integer.Iterateur;
+      begin
+	 It := Liste_Integer.Creer_Iterateur(L);
+	 Liste_Integer.Suivant(It);
+	 Res := Liste_Integer.Element_Courant(It); --  Init de Res avec la première valeur
+	 while  Liste_Integer.A_Suivant(It) loop
+	    --  On parcourt toutes les valeurs et on choisit la max (meilleure)
+	    Liste_Integer.Suivant(It);
+	    Res := Integer'Max(Res,Liste_Integer.Element_Courant(It));
+	 end loop;
+	 Liste_Integer.Libere_Iterateur(It);
+	 Liste_Integer.Libere_Liste(L);
+      end Meilleur_Val_Coup;
+      
    begin
       if P = 0 then
 	 --  On a atteint une feuille, on lance donc une évaluation statique
 	return Eval(E);
       elsif Est_Terminal(E) then
 	 --  état terminale mais profondeur pas atteinte
-	 Put_Line("Eval_Min_Max : Etat terminale");
+	 --Put_Line("Eval_Min_Max : Etat terminale");
 	 if Est_Nul(E) then
 	    return 0;
 	 elsif Est_Gagnant(E,J) then
@@ -38,7 +64,8 @@ package body Moteur_Jeu is
 	 end if;
       else
 	 --  Autre cas (i.e pas sur une feuille et état pas terminale)
-	 Put_Line("Eval_Min_Max : Récursivité enclanché");
+	 --Put_Line("Eval_Min_Max : Récursivité enclanché");
+	 L_Val_Coup := Liste_Integer.Creer_Liste;
 	 L := Creer_Liste;
 	 L := Coups_Possibles(E,J);
 	 --  !! L'iterateur doit etre crée aprés avoir remplis la liste à cause de l'élé fictif
@@ -47,15 +74,17 @@ package body Moteur_Jeu is
 	    Suivant(It);
 	    --  Calcule de l'état suivant pour chaque coup possible
 	    ESuiv := Etat_Suivant(E,C);	 
-	    if J = JoueurMoteur then	--  le prochain coup sera joué par l'adversaire
-	       IRes := Integer'Max(IRes,Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J)));
-	    else			--  le prochain coup et joué par le joueur Moteur
-	       IRes := Integer'Min(IRes,Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J)));
+	    if J = JoueurMoteur then	--  le prochain coup sera joué par "moi"
+	       Val_Coup := Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J));
+	    else			--  le prochain coup sera joué par l'adversaire
+	       Val_Coup := -Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J));
 	    end if;
+	    Liste_Integer.Insere_Tete(Val_Coup,L_Val_Coup);
 	 end loop;
 	 Libere_Iterateur(It);
-	 Libere_Liste(L);	 
-	 return IRes;
+	 Libere_Liste(L);
+	 Meilleur_Val_Coup(L_Val_Coup,Res);
+	 return Res;
       end if;
    end Eval_Min_Max;
    
