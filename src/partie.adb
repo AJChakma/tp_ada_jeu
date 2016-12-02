@@ -3,6 +3,7 @@ use Ada.Text_IO, Participant;
 
 package body Partie is
    
+   
    procedure Joue_Partie (E : in out Etat; J : in Joueur) is
       Joueur_Courant : Joueur := J;
       Coup_Joue : Coup;
@@ -35,7 +36,7 @@ package body Partie is
       
       --  Affichage du jeu et du gagnant ou du match nul
       Affiche_Jeu(E);
-      Affichage_Fin_Partie(E,Joueur_Courant);      
+      Affichage_Fin_Partie(E,Adversaire(Joueur_Courant));      
       
    end Joue_Partie;
       
@@ -46,7 +47,7 @@ package body Partie is
 	 Put_Line("Match nul !");
       elsif (Est_Gagnant(E,J) and J = Joueur1) then
 	 Put_Line(Nom_Joueur1 & " a gagné !");
-      elsif (Est_Gagnant(E,Adversaire(J))) then
+      elsif (Est_Gagnant(E,J) and J = Joueur2) then
 	 Put_Line(Nom_Joueur2 & " a gagné !");
       else
 	 Put_Line("Mauvaise utilisation de la procedure Affichage_Fin_Partie : pas d'état final !");

@@ -71,21 +71,24 @@ package body Puissance4 is
       
       return Est_Gagnant_Colonne(E,Symbole_Joueur) 
 	or else Est_Gagnant_Ligne(E,Symbole_Joueur) 
-	or else Est_Gagnant_Diagonale_NE_SO(E,Symbole_Joueur);
+	or else Est_Gagnant_Diagonale_NE_SO(E,Symbole_Joueur)
+	or else Est_Gagnant_Diagonale_NO_SE(E,Symbole_Joueur);
    end Est_Gagnant;
    
    
    function Est_Gagnant_Colonne(E :Etat; Sym_Joueur : Character) return Boolean is
-      Voisins_Colonne : Integer := 0;            
+      Voisins_Colonne : Integer;            
    begin
       
       --  Boucle de recherche par colonne
-      for J in E'Range loop
-	 for I in E(J)'Range loop
-	    if (Voisins_Colonne = Nb_Pieces_Alignees) then
-	       return True;
-	    elsif (E(J)(I) = Sym_Joueur) then
+      for J in Integer range 1..Largeur loop
+	 Voisins_Colonne := 0;
+	 for I in Integer range 1..Hauteur loop
+	    if (E(J)(I) = Sym_Joueur) then
 	       Voisins_Colonne := Voisins_Colonne + 1;
+	       if (Voisins_Colonne = Nb_Pieces_Alignees) then
+		  return True;
+	       end if;
 	    else
 	       Voisins_Colonne := 0;
 	    end if;
@@ -97,16 +100,18 @@ package body Puissance4 is
    
    
    function Est_Gagnant_Ligne(E :Etat; Sym_Joueur : Character) return Boolean is
-      Voisins_Ligne : Integer := 0;            
+      Voisins_Ligne : Integer;            
    begin
       
       --  Boucle de recherche par ligne
       for I in Integer range 1..Hauteur loop
-	 for J in Integer range 1..Largeur loop
-	    if (Voisins_Ligne = Nb_Pieces_Alignees) then
-	       return True;
-	    elsif (E(J)(I) = Sym_Joueur) then
+	 Voisins_Ligne := 0;
+	 for J in Integer range 1..Largeur loop	    
+	    if (E(J)(I) = Sym_Joueur) then
 	       Voisins_Ligne := Voisins_Ligne + 1;
+	       if (Voisins_Ligne = Nb_Pieces_Alignees) then
+		  return True;
+	       end if;
 	    else
 	       Voisins_Ligne := 0;
 	    end if;
@@ -118,20 +123,52 @@ package body Puissance4 is
    
    
    function Est_Gagnant_Diagonale_NE_SO(E :Etat; Sym_Joueur : Character) return Boolean is
-      Voisins_Diagonale : Integer := 0;            
+      Voisins_Diagonale : Integer;            
       Ligne_Diagonale : Integer;
       Colonne_Diagonale : Integer;   
    begin
 	 
       --  Boucle de recherche par diagonale NE-SO
-      for I in Integer range Largeur..1 loop
+      for I in reverse 1..Largeur loop
 	 Colonne_Diagonale := I;
 	 Ligne_Diagonale := 1;
-	 while (Ligne_Diagonale <= Hauteur) loop
-	    if (Voisins_Diagonale = Nb_Pieces_Alignees) then
-	       return True;
-	    elsif (E(Colonne_Diagonale)(Ligne_Diagonale) = Sym_Joueur) then
+	 Voisins_Diagonale := 0;
+	 while (Colonne_Diagonale <= Largeur) loop
+	    if (E(Colonne_Diagonale)(Ligne_Diagonale) = Sym_Joueur) then
 	       Voisins_Diagonale := Voisins_Diagonale + 1;
+	       if (Voisins_Diagonale = Nb_Pieces_Alignees) then
+		  return True;
+	       end if;
+	    else
+	       Voisins_Diagonale := 0;
+	    end if;
+	    
+	    Colonne_Diagonale := Colonne_Diagonale + 1;
+	    Ligne_Diagonale := Ligne_Diagonale + 1;
+	 end loop;
+      end loop;      
+      
+      return False;
+   end Est_Gagnant_Diagonale_NE_SO;
+   
+   
+   function Est_Gagnant_Diagonale_NO_SE(E :Etat; Sym_Joueur : Character) return Boolean is
+      Voisins_Diagonale : Integer;            
+      Ligne_Diagonale : Integer;
+      Colonne_Diagonale : Integer;   
+   begin
+      
+      --  Boucle de recherche par diagonale NE-SO
+      for I in Integer range 1..Largeur loop
+	 Colonne_Diagonale := I;
+	 Ligne_Diagonale := 1;
+	 Voisins_Diagonale := 0;
+	 while (Colonne_Diagonale >= 1) loop	    
+	    if (E(Colonne_Diagonale)(Ligne_Diagonale) = Sym_Joueur) then
+	       Voisins_Diagonale := Voisins_Diagonale + 1;
+	       if (Voisins_Diagonale = Nb_Pieces_Alignees) then
+		  return True;
+	       end if;
 	    else
 	       Voisins_Diagonale := 0;
 	    end if;
@@ -142,8 +179,8 @@ package body Puissance4 is
       end loop;      
       
       return False;
-   end Est_Gagnant_Diagonale_NE_SO;
-   
+   end Est_Gagnant_Diagonale_NO_SE;
+
    
       
    
@@ -176,14 +213,21 @@ package body Puissance4 is
       Put_Line("");
       
       --  Affichage du contenu de chaque colonne (symboles X ou O)
-      for I in Integer range 1 .. Hauteur loop
+      for I in reverse 1 .. Hauteur loop
 	 Put("| ");
 	 for J in Integer range 1..Largeur loop
-	    Put(E(J)(Hauteur-I+1) & "| ");
+	    Put(E(J)(I) & "| ");
 	 end loop;
 	 Put_Line("");
+      end loop;            
+      
+      --  Affichage du bas de la matrice
+      for I in Integer range 1..Largeur loop
+	 Put("---");
       end loop;
-      Put_Line("------------");	    
+      Put("-");
+      Put_Line("");
+
    end Afficher;
    
    procedure Affiche_Coup(C : in Coup) is
