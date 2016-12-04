@@ -143,7 +143,7 @@ package body Moteur_Jeu is
       --  New_Line;
       if Nbr_Coups_Egaux > 1 then
 	 declare
-	    -- Les lignes suivantes génère un nombre aléatoire entre 1 et le nombre max de coups
+	    -- Les lignes suivantes génèrent un nombre aléatoire entre 1 et le nombre max de coups
 	    subtype Intervalle is Positive range 1 .. Nbr_Coups_Egaux;
 
 	    package Random_Positive is new Ada.Numerics.Discrete_Random(Intervalle);
