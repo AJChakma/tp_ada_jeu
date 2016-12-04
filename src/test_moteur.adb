@@ -39,10 +39,14 @@ procedure Test_Moteur is
    
    function Eval(E : Integer) return Integer is
    begin
-      if E > 21 then
-	 return Integer'First;	 --  (i.e -999999...)
-      elsif E >= 21 and E <= 21 then
-	 return Integer'Last;	 --  (i.e +999999...)
+      if E = 21 then
+	 return Integer'Last;
+      elsif E > 21 then
+	 return 0;
+      elsif E = 17 then
+	 return -100;
+      elsif E >= 18 and E <= 20 then
+	 return 50;	--  entre 18 et 20 on est bien
       else
 	 return 0;
       end if;
@@ -68,9 +72,9 @@ procedure Test_Moteur is
 					     Affiche_Coup,
 					     Liste_Coups,
 					     Coups_Possibles,
-					     Eval,10,Joueur1);
+					     Eval,2,Joueur1);
    use Moteur_Jeu_Test;
-   Score : Integer := 0;
+   Score : Integer := 16;
    CoupIA,CoupJoueur : Integer;
 begin
    Put("début de partie score : " & Integer'Image(Score));
@@ -78,6 +82,8 @@ begin
    loop
       Put_Line("à l'ordinateur de jouer");
       CoupIA := Choix_Coup(Score);
+      New_Line;
+      New_Line;
       Put("l'ordiateur joue ");
       Affiche_Coup(CoupIA);
       New_Line;
