@@ -1,5 +1,5 @@
 default:
-	gnatmake -g main2joueurs.adb
+	gnatmake -g test_eval.adb
 
 clean:
 	rm *~ *.o *.ali b~*

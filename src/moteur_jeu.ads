@@ -26,7 +26,7 @@ generic
             return Liste_Coups.Liste; 
     
     -- Evaluation statique du jeu du point de vue de l'ordinateur
-    with function Eval(E : Etat) return Integer;   
+    with function Eval(E : Etat; J : Joueur) return Integer;   
     
     -- Profondeur de recherche du coup
     P : Natural;
