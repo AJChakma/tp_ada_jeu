@@ -112,7 +112,7 @@ package body Moteur_Jeu is
 	 --Put_Line("Choix_Coup : Examen d'un Coup...");
 	 Suivant(It);			--  évite l'élément fictif a la première bcl
 	 C := Element_Courant(It);	--  Récupère le coup courant
-	 Val_Coup := Eval_Min_Max(E,P,C,JoueurMoteur); --  Puis la valeure de ce coup
+	 Val_Coup := Eval_Min_Max(E,P,C,JoueurMoteur); --  Puis la valeure du coup
 	 --  Put("Choix_Coup : Le coup vaux " & Integer'Image(Val_Coup));
 	 --  New_Line;
 	 if Val_Coup = Val_Meilleur_Coup then
@@ -130,6 +130,10 @@ package body Moteur_Jeu is
 	 --else --if Val_Coup < Val_Meilleur_Coup
 	    -- si il esiste déjà un coup de valeurs plus élevé on ne fait rien
 	 end if;
+	 Put("Pour le coup :");
+	 Affiche_Coup(C);
+	 Put(", valeur :" & Integer'Image(Val_Coup));
+	 New_Line;
       end loop;
       Libere_Iterateur(It);
       Libere_Liste(L);
@@ -169,6 +173,8 @@ package body Moteur_Jeu is
 	    C := Element_Courant(It_L_Coups_Egaux);
 	    Libere_Iterateur(It_L_Coups_Egaux);
 	 end;
+      else				--  Il n'y a q'un seul meilleur coup
+	 C := Meilleur_Coup;
       end if;
       Libere_Liste(L_Coups_Egaux);
       return C;
