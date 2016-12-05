@@ -314,8 +314,8 @@ package body Puissance4 is
       end if;
       
       return Eval_Lignes(E,Sym_Joueur) + Eval_Colonnes(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
+
    end Eval;
-   
    
    procedure Afficher(E :Etat) is
    begin

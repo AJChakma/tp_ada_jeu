@@ -4,7 +4,7 @@ with Puissance4;
 with Participant;
 with Partie;
 with Liste_Generique;
--- with Moteur_Jeu;
+with Moteur_Jeu;
 
 use Ada.Text_IO;
 use Ada.Integer_Text_IO;
@@ -14,6 +14,26 @@ procedure Main2Joueurs is
    
    package MyPuissance4 is new Puissance4(5,5,3);
    
+   --INSTANCIATIONS POUR JOUER CONTRE L'IA
+   --------------------------------------------------------------------------------
+            
+   --  définition d'une IA joueur1 pour adverssaire avec le moteur de jeu
+      package IA_Player is new Moteur_Jeu(MyPuissance4.Etat,
+					  MyPuissance4.Coup,
+					  MyPuissance4.Jouer,
+					  MyPuissance4.Est_Gagnant,
+					  MyPuissance4.Est_Nul,
+					  MyPuissance4.Affiche_Coup,
+					  MyPuissance4.Liste_Coups,
+					  MyPuissance4.Coups_Possibles,
+					  Eval,
+					  3, --  Profondeur
+					  Joueur1);
+      
+      use IA_Player;
+      
+      --------------------------------------------------------------------------------
+      
    -- definition d'une partie entre un humain en Joueur 1 et un humain en Joueur 2
    package MyPartie is new Partie(MyPuissance4.Etat,
 				  MyPuissance4.Coup, 
