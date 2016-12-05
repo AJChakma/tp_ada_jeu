@@ -8,11 +8,9 @@ generic
    Largeur : Integer;
    Nb_Pieces_Alignees : Integer;
    
-   
    with package Liste_Coups is new Liste_Generique(Coup,Affiche_Coup);
-   use Liste_Coups;
+   use Liste_Coups;   
              
- 
 package Puissance4 is
    
    type Etat is private;
@@ -20,7 +18,6 @@ package Puissance4 is
    
    -- Affiche a l'ecran le coup passe en parametre
    procedure Affiche_Coup(C : in Coup);   
-   
    
    procedure Initialiser(E : in out Etat);   
    
@@ -44,13 +41,17 @@ package Puissance4 is
    function Demande_Coup_Joueur2(E : Etat) return Coup;   
    
    --  Evaluation statique d'un état 
-   function Eval(E : Etat; J : Joueur) return Integer;   
+   --function Eval(E : Etat; J : Joueur) return Integer;   
+   ------------------------------------------------------
+   --ERREUR !! La Eval est indépendante du joueur, ne prend
+   --que l'état en paramètre !!
+   ------------------------------------------------------
+   function Eval(E : Etat) return Integer;
    
    -- Retourne la liste des coups possibles pour J a partir de l'etat 
    function Coups_Possibles(E : Etat; J : Joueur) return Liste_Coups.Liste;    
 
 private   
-   
    
    Facteur_Eval : constant Integer := 100;
    

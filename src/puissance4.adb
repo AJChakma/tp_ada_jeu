@@ -302,11 +302,16 @@ package body Puissance4 is
       return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
    end Eval_Diagonale_SO_NE;
    
-   function Eval(E : Etat; Sym_Joueur : Joueur) return Integer is
-   begin
-      return Eval_Ligne(E,Sym_Joueur) + Eval_Colonne(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
-   end Eval;
+   --  function Eval(E : Etat; Sym_Joueur : Joueur) return Integer is
+   --  begin
+   --     return Eval_Ligne(E,Sym_Joueur) + Eval_Colonne(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
+   --  end Eval;
    
+   function Eval(E : Etat) return Integer is
+      Res : Integer;
+   begin
+      return Res;			--  à compléter
+   end Eval;
    
    procedure Afficher(E :Etat) is
    begin

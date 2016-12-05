@@ -16,26 +16,7 @@ procedure Main2Joueurs is
    
    --INSTANCIATIONS POUR JOUER CONTRE L'IA
    --------------------------------------------------------------------------------
-   
-   -- Instanciation d'une liste de coups qui seront les coups possibles
-   package Liste_Coups is new Liste_Generique(MyPuissance4.Coup,
-					      MyPuissance4.Affiche_Coup);
-   use Liste_Coups;
-   
-   --  Retourne une listes de coups possibles pour le joueur J
-   function Coups_Possibles(E : MyPuissance4.Etat; J : Joueur) return Liste is
-      L : Liste;
-   begin
-     return L;				--  à compléter
-   end Coups_Possibles;
-   
-   --  Fonction d'évaluation statique de l'état
-   function Eval(E: MyPuissance4.Etat) return Integer is
-      Res : Integer;
-   begin
-      return Res;			--  à compléter
-   end Eval;
-   
+            
    --  définition d'une IA joueur1 pour adverssaire avec le moteur de jeu
       package IA_Player is new Moteur_Jeu(MyPuissance4.Etat,
 					  MyPuissance4.Coup,
@@ -43,11 +24,11 @@ procedure Main2Joueurs is
 					  MyPuissance4.Est_Gagnant,
 					  MyPuissance4.Est_Nul,
 					  MyPuissance4.Affiche_Coup,
-					  Liste_Coups,
-					  Coups_Possibles,
-					  Eval
-					  ,3 --  Profondeur
-					    ,Joueur1);
+					  MyPuissance4.Liste_Coups,
+					  MyPuissance4.Coups_Possibles,
+					  Eval,
+					  3, --  Profondeur
+					  Joueur1);
       
       use IA_Player;
       
