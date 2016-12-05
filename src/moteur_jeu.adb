@@ -4,16 +4,16 @@ with Ada.Numerics.Discrete_Random;
 
 package body Moteur_Jeu is
    
-   use Liste_Coups;			--  Liste coup instancié dans .ads
+   use Liste_Coups;			--  Liste_Coups instancié dans .ads
    
        
-    -- fonction intern au package dit si un état est terminal ou pas
+    -- fonction interne au package qui dit si un état est terminal ou pas
    function Est_Terminal(E : Etat) return Boolean is
    begin
       return Est_Nul(E) or Est_Gagnant(E,JoueurMoteur) or Est_Gagnant(E,Adversaire(JoueurMoteur));
    end Est_Terminal;
    
-   -- procedure d'affiche d'entiers
+   -- procedure d'affichage d'entiers
    procedure Affiche_Integer(I : in Integer) is
    begin
       Put(Integer'Image(I));
@@ -28,7 +28,7 @@ package body Moteur_Jeu is
    function Eval_Min_Max(E : Etat; P : Natural; C : Coup; J : Joueur) return Integer is
       L : Liste_Coups.Liste;
       It : Iterateur;
-      Val_Coup,Res : Integer;  --  Valeur du coups retournée
+      Val_Coup,Res : Integer;  --  Valeur du coup retournée
       ESuiv : Etat;			--  Etat suivant (pour la bcl de rec aussi)
       package Liste_Integer is new Liste_Generique(Integer,Affiche_Integer);
       L_Val_Coup : Liste_Integer.Liste;	--  Liste de valeurs de coup (entier)
@@ -51,10 +51,10 @@ package body Moteur_Jeu is
    begin
       if P = 0 then
 	 --  On a atteint une feuille, on lance donc une évaluation statique
-	return Eval(E);
+	return Eval(E,J);
       elsif Est_Terminal(E) then
-	 --  état terminale mais profondeur pas atteinte
-	 --Put_Line("Eval_Min_Max : Etat terminale");
+	 --  état terminal mais profondeur pas atteinte
+	 --Put_Line("Eval_Min_Max : Etat terminal");
 	 if Est_Nul(E) then
 	    return 0;
 	 elsif Est_Gagnant(E,J) then
@@ -68,11 +68,11 @@ package body Moteur_Jeu is
 	 L_Val_Coup := Liste_Integer.Creer_Liste;
 	 L := Creer_Liste;
 	 L := Coups_Possibles(E,J);
-	 --  !! L'iterateur doit etre crée aprés avoir remplis la liste à cause de l'élé fictif
+	 --  !! L'iterateur doit etre créé aprés avoir rempli la liste à cause de l'élé fictif
 	 It := Creer_Iterateur(L);
 	 while A_Suivant(It) loop
 	    Suivant(It);
-	    --  Calcule de l'état suivant pour chaque coup possible
+	    --  Calcul de l'état suivant pour chaque coup possible
 	    ESuiv := Etat_Suivant(E,C);	 
 	    if J = JoueurMoteur then	--  le prochain coup sera joué par "moi"
 	       Val_Coup := Eval_Min_Max(ESuiv,P-1,Element_Courant(It),Adversaire(J));
@@ -90,12 +90,12 @@ package body Moteur_Jeu is
    
    -- Choix du prochain coup par l'ordinateur. 
     -- E : l'etat actuel du jeu;
-    -- P : profondeur a laquelle la selection doit s'effetuer
+    -- P : profondeur a laquelle la selection doit s'effectuer
    function Choix_Coup(E : Etat) return Coup is
       
       C,Meilleur_Coup : Coup;
       L : Liste_Coups.Liste;			--  Liste des coups possibles
-      It : Iterateur;			--  Itérateur sur la liste précédante
+      It : Iterateur;			--  Itérateur sur la liste précédente
       L_Coups_Egaux : Liste_Coups.Liste;	--  Liste contenant les coups à valeurs égales
       It_L_Coups_Egaux : Iterateur;
       Nbr_Coups_Egaux : Positive := 1;	--  Compte le nombre de coups à valeurs égales
@@ -107,28 +107,30 @@ package body Moteur_Jeu is
       L := Creer_Liste;
       L := Coups_Possibles(E,JoueurMoteur);	--  On récupère tous les coups possibles
       It := Creer_Iterateur(L);      
-      --On Evalue chaque coups
+      --On evalue chaque coup
       while A_Suivant(It) loop
 	 --Put_Line("Choix_Coup : Examen d'un Coup...");
 	 Suivant(It);			--  évite l'élément fictif a la première bcl
 	 C := Element_Courant(It);	--  Récupère le coup courant
-	 Val_Coup := Eval_Min_Max(E,P,C,JoueurMoteur); --  Puis la valeure du coup
+
+	 Val_Coup := Eval_Min_Max(E,P,C,JoueurMoteur); --  Puis la valeur de ce coup
+
 	 --  Put("Choix_Coup : Le coup vaux " & Integer'Image(Val_Coup));
 	 --  New_Line;
 	 if Val_Coup = Val_Meilleur_Coup then
-	    -- Si le coup évalué et le meilleur coup on la même valeur, on ajout le coup
-	    -- courant à la liste et on incrménete le nombre de coups égaux
+	    -- Si le coup évalué et le meilleur coup ont la même valeur, on ajoute le coup
+	    -- courant à la liste et on incrémente le nombre de coups égaux
 	    Insere_Tete(C,L_Coups_Egaux);
 	    Nbr_Coups_Egaux := Nbr_Coups_Egaux+1;
 	 elsif Val_Coup > Val_Meilleur_Coup then
-	    --  On a trouvé un nouveau meilleur coup, on l'enrgistre ainsi que sa valeur
+	    --  On a trouvé un nouveau meilleur coup, on l'enregistre ainsi que sa valeur
 	    --  Pour la prochaine boucle
 	    Meilleur_Coup := C;
 	    Insere_Tete(Meilleur_Coup,L_Coups_Egaux);
 	    Nbr_Coups_Egaux := 1;	--  Reset du nombre de coups égaux
 	    Val_Meilleur_Coup := Val_Coup;
 	 --else --if Val_Coup < Val_Meilleur_Coup
-	    -- si il esiste déjà un coup de valeurs plus élevé on ne fait rien
+	    -- si il existe déjà un coup de valeur plus élevée, on ne fait rien
 	 end if;
 	 Put("Pour le coup :");
 	 Affiche_Coup(C);
@@ -141,13 +143,13 @@ package body Moteur_Jeu is
       --  à ce stade on obtient : 
       --  	- Un entier Val_Meilleur_Coup qui est la valeur max Possible
       --  	- Une liste de coups de valeurs égales : Val_Meilleur_Coup
-      --  	- Un Entier Nbr_Coups_Egaux Qui Représente Le Nombre De Coups De Valeur égales
+      --  	- Un Entier Nbr_Coups_Egaux qui représente le nombre de coups de valeurs égales
       --  --------------------------------------------------------------------------------
       --  Put("Choix_Coup : Nbr de coups égaux : " & Integer'Image(Nbr_Coups_Egaux));
       --  New_Line;
       if Nbr_Coups_Egaux > 1 then
 	 declare
-	    -- Les lignes suivante génère un nombre aléatoire entre 1 et le nombre max de coups
+	    -- Les lignes suivantes génèrent un nombre aléatoire entre 1 et le nombre max de coups
 	    subtype Intervalle is Positive range 1 .. Nbr_Coups_Egaux;
 
 	    package Random_Positive is new Ada.Numerics.Discrete_Random(Intervalle);
@@ -160,13 +162,13 @@ package body Moteur_Jeu is
 	    --  New_Line;
 	    Reset(G);	    
 	    It_L_Coups_Egaux := Creer_Iterateur(L_Coups_Egaux);
-	    --  On parcoure la liste un nombre aléatoire de fois pour choisir le coup
+	    --  On parcourt la liste un nombre aléatoire de fois pour choisir le coup
 	    Pos := Random(G);
 	    --  Put("Choix_Coup : coup choisit numéro" & Integer'Image(Pos));
 	    --  New_Line;
 	    loop
 	       I := I+1;
-	       --  Comme la valeure aléatoire minimum et 1, on sautera forcément l'élement fictif
+	       --  Comme la valeur aléatoire minimum est 1, on sautera forcément l'élement fictif
 	       Suivant(It_L_Coups_Egaux);
 	       exit when (not A_Suivant(It_L_Coups_Egaux)) or I = Pos;
 	    end loop;

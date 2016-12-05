@@ -56,7 +56,7 @@ package body Liste_Generique is
 	It_I : Iterateur_Interne;
 	EleFictif : Element;
      begin	
-	--  Ajou d'un élément fictif en fin de liste
+	--  Ajout d'un élément fictif en fin de liste
 	It_I := new Cellule'(EleFictif,L);
 	It := new Iterateur_Interne'(It_I);
 	return It;
@@ -85,14 +85,14 @@ package body Liste_Generique is
     -- Retourne l'element courant
      function Element_Courant(It : Iterateur) return Element is 
      begin
-	--  It.all désigne l'iter intern, et donc it.all.all une celleule
+	--  It.all désigne l'iter interne, et donc it.all.all une cellule
 	return It.all.all.Ele;
      end Element_Courant;
 
     -- Verifie s'il reste un element a parcourir
      function A_Suivant(It : Iterateur) return Boolean is 
      begin
-	--  It.all désigne l'itérateur interne pointant sur une cellule ayant un chant Next
+	--  It.all désigne l'itérateur interne pointant sur une cellule ayant un champ Next
 	return (It.all.Next /= null);
      end A_Suivant;
    

@@ -49,7 +49,7 @@ private
     type Cellule;
     type Liste is access Cellule;
     
-    type Cellule is record		--  La cellul contient un élément générique de type élément
+    type Cellule is record		--  La cellule contient un élément générique de type élément
        Ele: Element;
        Next: Liste;
     end record;

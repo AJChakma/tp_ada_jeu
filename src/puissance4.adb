@@ -3,6 +3,7 @@ use Ada.Text_IO, Ada.Integer_Text_IO, Participant;
 
 package body Puissance4 is
    
+   
    procedure Initialiser(E: in out Etat) is
    begin
       --  Initialisation de la matrice de jeu par le caractère vide
@@ -80,7 +81,6 @@ package body Puissance4 is
       Voisins_Colonne : Integer;            
    begin
       
-      --  Boucle de recherche par colonne
       for J in Integer range 1..Largeur loop
 	 Voisins_Colonne := 0;
 	 for I in Integer range 1..Hauteur loop
@@ -103,7 +103,7 @@ package body Puissance4 is
       Voisins_Ligne : Integer;            
    begin
       
-      --  Boucle de recherche par ligne
+
       for I in Integer range 1..Hauteur loop
 	 Voisins_Ligne := 0;
 	 for J in Integer range 1..Largeur loop	    
@@ -122,15 +122,15 @@ package body Puissance4 is
    end Est_Gagnant_Ligne;
    
    
-   function Est_Gagnant_Diagonale_NE_SO(E :Etat; Sym_Joueur : Character) return Boolean is
+   function Est_Gagnant_Diagonale_SO_NE(E :Etat; Sym_Joueur : Character) return Boolean is
       Voisins_Diagonale : Integer;            
       Ligne_Diagonale : Integer;
       Colonne_Diagonale : Integer;   
    begin
 	 
-      --  Boucle de recherche par diagonale NE-SO
-      for I in reverse 1..Largeur loop
-	 Colonne_Diagonale := I;
+
+      for J in reverse 1..Largeur loop
+	 Colonne_Diagonale := J;
 	 Ligne_Diagonale := 1;
 	 Voisins_Diagonale := 0;
 	 while (Colonne_Diagonale <= Largeur) loop
@@ -149,18 +149,18 @@ package body Puissance4 is
       end loop;      
       
       return False;
-   end Est_Gagnant_Diagonale_NE_SO;
+   end Est_Gagnant_Diagonale_SO_NE;
    
    
-   function Est_Gagnant_Diagonale_NO_SE(E :Etat; Sym_Joueur : Character) return Boolean is
+   function Est_Gagnant_Diagonale_SE_NO(E :Etat; Sym_Joueur : Character) return Boolean is
       Voisins_Diagonale : Integer;            
       Ligne_Diagonale : Integer;
       Colonne_Diagonale : Integer;   
    begin
       
-      --  Boucle de recherche par diagonale NE-SO
-      for I in Integer range 1..Largeur loop
-	 Colonne_Diagonale := I;
+    
+      for J in Integer range 1..Largeur loop
+	 Colonne_Diagonale := J;
 	 Ligne_Diagonale := 1;
 	 Voisins_Diagonale := 0;
 	 while (Colonne_Diagonale >= 1) loop	    
@@ -179,12 +179,9 @@ package body Puissance4 is
       end loop;      
       
       return False;
-   end Est_Gagnant_Diagonale_NO_SE;
+   end Est_Gagnant_Diagonale_SE_NO;
 
-   
-      
-   
-   
+     
    function Est_Nul(E :Etat) return Boolean is      
    begin
       if (Est_Gagnant(E,Joueur1)) then
@@ -200,6 +197,115 @@ package body Puissance4 is
 	 return True;
       end if;
    end Est_Nul;
+   
+   
+   procedure Affiche_Integer(I : in Integer) is
+   begin
+      Put(Integer'Image(I));
+   end;
+      
+   function Eval_Colonnes(E :Etat; Sym_Joueur : Character) return Integer is
+      Eval_Colonne : Integer := 0;
+   begin
+      for J in Integer range 1..Largeur loop
+	 Eval_Colonne := Eval_Colonne + Eval_Colonne(J,Sym_Joueur);
+      end loop;
+      
+   end Eval_Colonnes;
+
+   function Eval_Colonne(Col : Integer; Sym_Joueur : Character) return Integer is
+      Nb_Symboles : Integer := 0;
+   begin
+      for I in Integer range 1..Hauteur loop
+	 if (E(J)(I) = Sym_Joueur) then
+	    Nb_Symboles := Nb_Symboles + 1;
+	 elsif (E(J)(I) = ' ') then
+	    return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+	 else
+	    Nb_Symboles := 0;
+	 end if;
+      end loop;
+   end Eval_Colonne;
+   
+   
+   function Eval_Lignes(E :Etat; Sym_Joueur : Character) return Integer is
+      Eval_Ligne : Integer := 0;
+   begin
+      for I in Integer range 1..Hauteur loop
+	 Eval_Ligne := Eval_Ligne + Eval_Ligne(I,Sym_Joueur);
+      end loop;
+      
+   end Eval_Lignes;
+
+   function Eval_Ligne(Lig : Integer; Sym_Joueur : Character) return Integer is
+      Nb_Symboles : Integer := 0;
+      Nb_Espaces_Vides : Integer := 0;
+   begin
+      for J in Integer range 1..Largeur loop
+	 --  On compte les symboles et les espaces vides entre les symboles
+	 if (E(J)(Lig) = Sym_Joueur or else E(J)(Lig) = ' ') then
+	    if (E(J)(I) = ' ') then
+	       Nb_Espaces_Vides := Nb_Espaces_Vides + 1;
+	    end if;
+	    Nb_Symboles := Nb_Symboles + 1;
+	 else
+	    Nb_Symboles := 0;
+	    Nb_Espaces_Vides := 0;
+	 end if;
+      end loop;
+      return (Nb_Symboles-Nb_Espaces_Vides)/Nb_Pieces_Alignees*Facteur_Eval;
+   end Eval_Ligne;
+         
+   
+   function Eval_Diagonale_SE_NO(E : Etat; Sym_Joueur : Character) return Integer is
+      Nb_Symboles : Integer := 0;
+      Lig_Diag : Integer;
+      Col_Diag : Integer;
+   begin
+      for J in Integer range 1..Largeur loop
+	 Colonne_Diagonale := J;
+	 Ligne_Diagonale := 1;
+	 Nb_Symboles := 0;
+	 while (Colonne_Diagonale >= 1) loop	    
+	    if (E(Colonne_Diagonale)(Ligne_Diagonale) = Sym_Joueur or else E(Colonne_Diagonale)(Ligne_Diagonale) = ' ') then
+	       Nb_Symboles := Nb_Symboles + 1;
+	    else
+	       Nb_Symboles := 0;
+	    end if;	    
+	    Colonne_Diagonale := Colonne_Diagonale - 1;
+	    Ligne_Diagonale := Ligne_Diagonale + 1;
+	 end loop;
+      end loop;            
+      return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+   end Eval_Diagonale_SE_NO;
+   
+   
+   function Eval_Diagonale_SO_NE(E : Etat; Sym_Joueur : Character) return Integer is
+      Nb_Symboles : Integer := 0;
+      Lig_Diag : Integer;
+      Col_Diag : Integer;
+   begin    
+      for J in reverse 1..Largeur loop
+	 Colonne_Diagonale := J;
+	 Ligne_Diagonale := 1;
+	 Nb_Symboles := 0;
+	 while (Colonne_Diagonale <= Largeur) loop	    
+	    if (E(Colonne_Diagonale)(Ligne_Diagonale) = Sym_Joueur or else E(Colonne_Diagonale)(Ligne_Diagonale) = ' ') then
+	       Nb_Symboles := Nb_Symboles + 1;
+	    else
+	       Nb_Symboles := 0;
+	    end if;	    
+	    Colonne_Diagonale := Colonne_Diagonale + 1;
+	    Ligne_Diagonale := Ligne_Diagonale + 1;
+	 end loop;
+      end loop;            
+      return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+   end Eval_Diagonale_SO_NE;
+   
+   function Eval(E : Etat; Sym_Joueur : Joueur) return Integer is
+   begin
+      return Eval_Ligne(E,Sym_Joueur) + Eval_Colonne(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
+   end Eval;
    
    
    procedure Afficher(E :Etat) is
@@ -257,5 +363,38 @@ package body Puissance4 is
       --  On renvoie 0 si on n'a trouvé aucune case libre
       return 0;      
    end Recherche_Case_Libre;
-
+   
+   
+   function Coups_Possibles(E : Etat; J : Joueur) return Liste_Coups.Liste is
+      L_Coups_Possibles : Liste := Creer_Liste;
+      Ligne_Case_Libre : Integer;
+      Coup_Possible : Coup;
+   begin
+      for I in Integer range 1..Largeur loop
+	 if (Recherche_Case_Libre(E,J) /= 0) then
+	    if (J = Joueur1) then
+	       Coup_Possible.Symbole := 'X';
+	    else
+	       Coup_Possible.Symbole := 'O';
+	    end if;
+	    Coup_Possible.Colonne := I;
+	    Insere_Tete(Coup_Possible,L_Coups_Possibles);
+	 end if;
+      end loop;
+   end Coups_Possibles;
+   
+   function Compte_Nb_Symbole(E :Etat; Symbole_A_Compter : Character) return Integer is
+      Nb_Symbole : Integer := 0;
+   begin
+      for J in Integer range 1..Largeur loop
+	 for I in Integer range 1..Hauteur loop
+	    if (E(J)(I) = Symbole_A_Compter) then
+	       Nb_Symbole := Nb_Symbole + 1;
+	    end if;
+	 end loop;
+      end loop;
+      return Nb_Symbole;
+   end Compte_Nb_Symbole;
+   
+   
 end Puissance4;

@@ -12,7 +12,7 @@ use Participant;
 
 procedure Main2Joueurs is
    
-   package MyPuissance4 is new Puissance4(4,4,4);
+   package MyPuissance4 is new Puissance4(5,5,3);
    
    --INSTANCIATIONS POUR JOUER CONTRE L'IA
    --------------------------------------------------------------------------------
