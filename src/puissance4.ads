@@ -7,19 +7,23 @@ generic
    Hauteur : Integer;
    Largeur : Integer;
    Nb_Pieces_Alignees : Integer;
-   
-   
-   with package Liste_Coups is new Liste_Generique(Coup,Affiche_Coup);
-   use Liste_Coups;
-             
+                   
  
 package Puissance4 is
    
    type Etat is private;
-   type Coup is private;      
+--   type Coup is private;      
+   
+   type Coup is record
+      Indice_Colonne : Integer;
+      Symbole : Character;
+   end record;
    
    -- Affiche a l'ecran le coup passe en parametre
    procedure Affiche_Coup(C : in Coup);   
+   
+   
+   package Liste_Coups is new Liste_Generique(Coup,Affiche_Coup);
    
    
    procedure Initialiser(E : in out Etat);   
@@ -61,10 +65,10 @@ private
    type Colonne is array (1..Hauteur) of Character;
    type Etat is array (1..Largeur) of Colonne;   
       
-   type Coup is record
-      Indice_Colonne : Integer;
-      Symbole : Character;
-   end record;
+   --  type Coup is record
+   --     Indice_Colonne : Integer;
+   --     Symbole : Character;
+   --  end record;
    
 
    function Recherche_Case_Libre(E : Etat; Indice_Colonne : Integer) return Integer;
@@ -83,10 +87,10 @@ private
    
    function Eval_Lignes(E :Etat; Sym_Joueur : Character) return Integer;
       
-   function Eval_Ligne(Lig : Integer; Sym_Joueur : Character) return Integer;
+   function Eval_Ligne(Lig : Integer; E : Etat; Sym_Joueur : Character) return Integer;
    
    function Eval_Colonnes(E :Etat; Sym_Joueur : Character) return Integer;
    
-   function Eval_Colonne(Col : Integer; Sym_Joueur : Character) return Integer;
+   function Eval_Colonne(Col : Integer; E : Etat; Sym_Joueur : Character) return Integer;
    
 end Puissance4;

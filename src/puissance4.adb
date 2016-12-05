@@ -3,6 +3,7 @@ use Ada.Text_IO, Ada.Integer_Text_IO, Participant;
 
 package body Puissance4 is
    
+   use Liste_Coups;
    
    procedure Initialiser(E: in out Etat) is
    begin
@@ -72,8 +73,8 @@ package body Puissance4 is
       
       return Est_Gagnant_Colonne(E,Symbole_Joueur) 
 	or else Est_Gagnant_Ligne(E,Symbole_Joueur) 
-	or else Est_Gagnant_Diagonale_NE_SO(E,Symbole_Joueur)
-	or else Est_Gagnant_Diagonale_NO_SE(E,Symbole_Joueur);
+	or else Est_Gagnant_Diagonale_SO_NE(E,Symbole_Joueur)
+	or else Est_Gagnant_Diagonale_SE_NO(E,Symbole_Joueur);
    end Est_Gagnant;
    
    
@@ -202,49 +203,50 @@ package body Puissance4 is
    procedure Affiche_Integer(I : in Integer) is
    begin
       Put(Integer'Image(I));
-   end;
+   end Affiche_Integer;
       
    function Eval_Colonnes(E :Etat; Sym_Joueur : Character) return Integer is
-      Eval_Colonne : Integer := 0;
+      Eval : Integer := 0;
    begin
       for J in Integer range 1..Largeur loop
-	 Eval_Colonne := Eval_Colonne + Eval_Colonne(J,Sym_Joueur);
+	 Eval := Eval + Eval_Colonne(J,E,Sym_Joueur);
       end loop;
-      
+      return Eval;
    end Eval_Colonnes;
 
-   function Eval_Colonne(Col : Integer; Sym_Joueur : Character) return Integer is
+   function Eval_Colonne(Col : Integer; E : Etat; Sym_Joueur : Character) return Integer is
       Nb_Symboles : Integer := 0;
    begin
       for I in Integer range 1..Hauteur loop
-	 if (E(J)(I) = Sym_Joueur) then
+	 if (E(Col)(I) = Sym_Joueur) then
 	    Nb_Symboles := Nb_Symboles + 1;
-	 elsif (E(J)(I) = ' ') then
-	    return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+	 elsif (E(Col)(I) = ' ') then
+	    return Nb_Symboles*Facteur_Eval/Nb_Pieces_Alignees;
 	 else
 	    Nb_Symboles := 0;
 	 end if;
       end loop;
+      return Nb_Symboles*Facteur_Eval/Nb_Pieces_Alignees;
    end Eval_Colonne;
    
    
    function Eval_Lignes(E :Etat; Sym_Joueur : Character) return Integer is
-      Eval_Ligne : Integer := 0;
+      Eval : Integer := 0;
    begin
       for I in Integer range 1..Hauteur loop
-	 Eval_Ligne := Eval_Ligne + Eval_Ligne(I,Sym_Joueur);
+	 Eval := Eval + Eval_Ligne(I,E,Sym_Joueur);
       end loop;
-      
+      return Eval;
    end Eval_Lignes;
 
-   function Eval_Ligne(Lig : Integer; Sym_Joueur : Character) return Integer is
+   function Eval_Ligne(Lig : Integer; E : Etat; Sym_Joueur : Character) return Integer is
       Nb_Symboles : Integer := 0;
       Nb_Espaces_Vides : Integer := 0;
    begin
       for J in Integer range 1..Largeur loop
 	 --  On compte les symboles et les espaces vides entre les symboles
 	 if (E(J)(Lig) = Sym_Joueur or else E(J)(Lig) = ' ') then
-	    if (E(J)(I) = ' ') then
+	    if (E(J)(Lig) = ' ') then
 	       Nb_Espaces_Vides := Nb_Espaces_Vides + 1;
 	    end if;
 	    Nb_Symboles := Nb_Symboles + 1;
@@ -253,14 +255,14 @@ package body Puissance4 is
 	    Nb_Espaces_Vides := 0;
 	 end if;
       end loop;
-      return (Nb_Symboles-Nb_Espaces_Vides)/Nb_Pieces_Alignees*Facteur_Eval;
+      return (Nb_Symboles*Facteur_Eval-Nb_Espaces_Vides*Facteur_Eval)/Nb_Pieces_Alignees;
    end Eval_Ligne;
          
    
    function Eval_Diagonale_SE_NO(E : Etat; Sym_Joueur : Character) return Integer is
       Nb_Symboles : Integer := 0;
-      Lig_Diag : Integer;
-      Col_Diag : Integer;
+      Ligne_Diagonale : Integer;
+      Colonne_Diagonale : Integer;
    begin
       for J in Integer range 1..Largeur loop
 	 Colonne_Diagonale := J;
@@ -282,8 +284,8 @@ package body Puissance4 is
    
    function Eval_Diagonale_SO_NE(E : Etat; Sym_Joueur : Character) return Integer is
       Nb_Symboles : Integer := 0;
-      Lig_Diag : Integer;
-      Col_Diag : Integer;
+      Ligne_Diagonale : Integer;
+      Colonne_Diagonale : Integer;
    begin    
       for J in reverse 1..Largeur loop
 	 Colonne_Diagonale := J;
@@ -302,9 +304,16 @@ package body Puissance4 is
       return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
    end Eval_Diagonale_SO_NE;
    
-   function Eval(E : Etat; Sym_Joueur : Joueur) return Integer is
+   function Eval(E : Etat; J : Joueur) return Integer is
+      Sym_Joueur : Character;
    begin
-      return Eval_Ligne(E,Sym_Joueur) + Eval_Colonne(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
+      if (J = Joueur1) then
+	 Sym_Joueur := 'X';
+      else
+	 Sym_Joueur := 'O';
+      end if;
+      
+      return Eval_Lignes(E,Sym_Joueur) + Eval_Colonnes(E,Sym_Joueur) + Eval_Diagonale_SO_NE(E,Sym_Joueur) + Eval_Diagonale_SE_NO(E,Sym_Joueur);
    end Eval;
    
    
@@ -367,20 +376,20 @@ package body Puissance4 is
    
    function Coups_Possibles(E : Etat; J : Joueur) return Liste_Coups.Liste is
       L_Coups_Possibles : Liste := Creer_Liste;
-      Ligne_Case_Libre : Integer;
       Coup_Possible : Coup;
    begin
       for I in Integer range 1..Largeur loop
-	 if (Recherche_Case_Libre(E,J) /= 0) then
+	 if (Recherche_Case_Libre(E,I) /= 0) then
 	    if (J = Joueur1) then
 	       Coup_Possible.Symbole := 'X';
 	    else
 	       Coup_Possible.Symbole := 'O';
 	    end if;
-	    Coup_Possible.Colonne := I;
+	    Coup_Possible.Indice_Colonne := I;
 	    Insere_Tete(Coup_Possible,L_Coups_Possibles);
 	 end if;
       end loop;
+      return L_Coups_Possibles;
    end Coups_Possibles;
    
    function Compte_Nb_Symbole(E :Etat; Symbole_A_Compter : Character) return Integer is

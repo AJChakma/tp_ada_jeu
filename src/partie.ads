@@ -32,7 +32,7 @@ generic
     with function Coup_Joueur1(E : Etat) return Coup;
     
     -- Retourne le prochaine coup joue par le joueur2   
-  --  with function Coup_Joueur2(E : Etat) return Coup;   
+    with function Coup_Joueur2(E : Etat) return Coup;   
         
     
 package Partie is   
