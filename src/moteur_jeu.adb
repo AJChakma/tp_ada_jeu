@@ -1,6 +1,8 @@
 with Ada.Text_Io;use Ada.Text_Io;
 with Ada.Integer_Text_Io; use Ada.Integer_Text_Io;
 with Ada.Numerics.Discrete_Random;
+with Participant;
+use Participant;
 
 package body Moteur_Jeu is
    
@@ -58,9 +60,9 @@ package body Moteur_Jeu is
 	 if Est_Nul(E) then
 	    return 0;
 	 elsif Est_Gagnant(E,J) then
-	    return Integer'Last;	--  Valeur max (donc positive) d'un type Integer
+	    return Integer'First;	--  Valeur max (donc positive) d'un type Integer
 	 else
-	    return Integer'First;	--  Valeur min (donc negative) d'un type Integer
+	    return Integer'Last;	--  Valeur min (donc negative) d'un type Integer
 	 end if;
       else
 	 --  Autre cas (i.e pas sur une feuille et état pas terminale)

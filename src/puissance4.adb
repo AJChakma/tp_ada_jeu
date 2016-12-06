@@ -278,7 +278,7 @@ package body Puissance4 is
 	    Ligne_Diagonale := Ligne_Diagonale + 1;
 	 end loop;
       end loop;            
-      return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+      return Nb_Symboles*Facteur_Eval/Nb_Pieces_Alignees;
    end Eval_Diagonale_SE_NO;
    
    
@@ -301,7 +301,7 @@ package body Puissance4 is
 	    Ligne_Diagonale := Ligne_Diagonale + 1;
 	 end loop;
       end loop;            
-      return Nb_Symboles/Nb_Pieces_Alignees*Facteur_Eval;
+      return Nb_Symboles*Facteur_Eval/Nb_Pieces_Alignees;
    end Eval_Diagonale_SO_NE;
    
    function Eval(E : Etat; J : Joueur) return Integer is

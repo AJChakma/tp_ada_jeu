@@ -50,7 +50,7 @@ package Puissance4 is
    --ERREUR !! La Eval est indépendante du joueur, ne prend
    --que l'état en paramètre !!
    ------------------------------------------------------
-   function Eval(E : Etat) return Integer;
+   function Eval(E : Etat; J : Joueur) return Integer;
    
    -- Retourne la liste des coups possibles pour J a partir de l'etat 
    function Coups_Possibles(E : Etat; J : Joueur) return Liste_Coups.Liste;    
